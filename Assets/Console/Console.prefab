@@ -11,12 +11,13 @@ GameObject:
   - component: {fileID: 433810064874125688}
   - component: {fileID: 5563330419226150944}
   - component: {fileID: 3632787342960556686}
+  - component: {fileID: 6955493679917231403}
   m_Layer: 0
-  m_Name: Frame
+  m_Name: Console
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &433810064874125688
 Transform:
@@ -59,6 +60,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 49adaa5ced25f4d44b5dd3cc4433403f, type: 2}
+  - {fileID: 2100000, guid: a2b19b9113a70f843905c6736fc41fd2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -79,6 +81,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!136 &6955493679917231403
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2680918342524703519}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.25
+  m_Height: 2.01
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.08, z: 0.76000017}
 --- !u!1 &6352815027341465111
 GameObject:
   m_ObjectHideFlags: 0
