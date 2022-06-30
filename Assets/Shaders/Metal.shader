@@ -1,15 +1,22 @@
-﻿// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 // Unlit shader. Simplest possible textured shader.
 // - SUPPORTS lightmap
 // - no lighting
 // - no per-material color
 
+// Further modified from VRChat SDK:
+// - Includes directional lightmap support.
+// - Accepts an AO bake, not RGB diffuse.
+
 Shader "Borg Stuff/Metal"
 {
     Properties
     {
-        _MainTex ("Base (RGB)", 2D) = "white" {}
+        _MainTex ("Ambient Occlusion", 2D) = "white" {}
+        [NoScaleOffset] _BumpMap ("Normalmap", 2D) = "bump" {}
     }
 
     SubShader
@@ -52,6 +59,8 @@ Shader "Borg Stuff/Metal"
                 float3 pos : POSITION;
                 float3 uv1 : TEXCOORD1;
                 float3 uv0 : TEXCOORD0;
+                float3 normal : NORMAL;
+                float4 tangent : TANGENT;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -64,6 +73,9 @@ Shader "Borg Stuff/Metal"
                 fixed fog : TEXCOORD2;
 #endif
                 float4 pos : SV_POSITION;
+                float3 normal : TEXCOORD3;
+                float3 tangent : TEXCOORD4;
+                float3 bitangent : TEXCOORD5;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -88,24 +100,38 @@ Shader "Borg Stuff/Metal"
 
                 // transform position
                 o.pos = UnityObjectToClipPos(IN.pos);
+
+                float3x3 tangentToWorld = (float3x3)unity_ObjectToWorld;
+
+				half3 worldNormal = mul(tangentToWorld, IN.normal);
+				half3 worldTangent = mul(tangentToWorld, IN.tangent);
+
+				o.normal = normalize(worldNormal);
+				o.tangent = normalize(worldTangent);
+				o.bitangent = normalize(mul(tangentToWorld, cross(IN.normal, IN.tangent.xyz) * IN.tangent.w));
+
                 return o;
             }
 
             // textures
             sampler2D _MainTex;
+            UNITY_DECLARE_TEX2D(_BumpMap);
 
             // fragment shader
             fixed4 frag(v2f IN) : SV_Target
             {
-                fixed4 col, tex;
-
                 // Fetch lightmap
-                half4 bakedColorTex = UNITY_SAMPLE_TEX2D(unity_Lightmap, IN.uv0.xy);
-                col.rgb = DecodeLightmap(bakedColorTex);
+                fixed4 col;
+                col.rgb = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, IN.uv0.xy));
+                half4 bakedColorTex = UNITY_SAMPLE_TEX2D_SAMPLER(unity_LightmapInd, unity_Lightmap, IN.uv0.xy);
+                half3 normal = UnpackNormal(UNITY_SAMPLE_TEX2D(_BumpMap, IN.uv1));
+                float3x3 tangentToWorld = float3x3(normalize(IN.tangent), normalize(IN.bitangent), normalize(IN.normal));
+				
 
-                // Fetch color texture
-                tex = tex2D(_MainTex, IN.uv1.xy);
-                col.rgb = tex.rgb * col.rgb;
+                half3 worldNormal = mul(normal, tangentToWorld);
+                
+                col.rgb = DecodeDirectionalLightmap(col.rgb, bakedColorTex, worldNormal);
+                col.rgb *= tex2D(_MainTex, IN.uv1.xy).r * 0.125;
                 col.a = 1;
 
                 // fog
