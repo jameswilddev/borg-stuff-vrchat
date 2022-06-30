@@ -69,13 +69,14 @@ Shader "Borg Stuff/Metal"
             {
                 float2 uv0 : TEXCOORD0;
                 float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
 #if USING_FOG
-                fixed fog : TEXCOORD2;
+                fixed fog : TEXCOORD3;
 #endif
                 float4 pos : SV_POSITION;
-                float3 normal : TEXCOORD3;
-                float3 tangent : TEXCOORD4;
-                float3 bitangent : TEXCOORD5;
+                float3 normal : TEXCOORD4;
+                float3 tangent : TEXCOORD5;
+                float3 bitangent : TEXCOORD6;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -87,8 +88,9 @@ Shader "Borg Stuff/Metal"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
                 // compute texture coordinates
-                o.uv0 = IN.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
-                o.uv1 = IN.uv0.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+                o.uv0 = IN.uv1 * unity_LightmapST.xy + unity_LightmapST.zw;
+                o.uv1 = IN.uv0 * _MainTex_ST.xy + _MainTex_ST.zw;
+                o.uv2 = IN.uv0;
 
                 // fog
 #if USING_FOG
@@ -122,16 +124,16 @@ Shader "Borg Stuff/Metal"
             {
                 // Fetch lightmap
                 fixed4 col;
-                col.rgb = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, IN.uv0.xy));
-                half4 bakedColorTex = UNITY_SAMPLE_TEX2D_SAMPLER(unity_LightmapInd, unity_Lightmap, IN.uv0.xy);
-                half3 normal = UnpackNormal(UNITY_SAMPLE_TEX2D(_BumpMap, IN.uv1));
+                col.rgb = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, IN.uv0));
+                half4 bakedColorTex = UNITY_SAMPLE_TEX2D_SAMPLER(unity_LightmapInd, unity_Lightmap, IN.uv0);
+                half3 normal = UnpackNormal(UNITY_SAMPLE_TEX2D(_BumpMap, IN.uv2));
                 float3x3 tangentToWorld = float3x3(normalize(IN.tangent), normalize(IN.bitangent), normalize(IN.normal));
 				
 
                 half3 worldNormal = mul(normal, tangentToWorld);
                 
                 col.rgb = DecodeDirectionalLightmap(col.rgb, bakedColorTex, worldNormal);
-                col.rgb *= tex2D(_MainTex, IN.uv1.xy).r * 0.125;
+                col.rgb *= tex2D(_MainTex, IN.uv1).r * 0.125;
                 col.a = 1;
 
                 // fog
