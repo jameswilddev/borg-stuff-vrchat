@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Supports
-  m_Shader: {fileID: 4800000, guid: e30f2fd96d21a0043a7ba7e0c7ceac07, type: 3}
-  m_ShaderKeywords: _NORMALMAP
+  m_Name: Pillar Glow
+  m_Shader: {fileID: 4800000, guid: 7d2c56fe25a7e3e4bbec6b9931621647, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 99569fa4ae60c434eb90108d32360b6d, type: 3}
+        m_Texture: {fileID: 2800000, guid: c87f081fe7992a841b11ae1961defca6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -40,7 +40,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 3f835241e12ec6d44b416ee22f038c0b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 773ece911d04d49488b94ee3a257358c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
