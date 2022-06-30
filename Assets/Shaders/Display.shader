@@ -65,7 +65,7 @@
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 o.uv0 = v.uv0 * _MainTex_ST.xy + _MainTex_ST.zw;
                 o.uv1 = v.uv1;
-                o.uv2 = v.uv1;// * _AmbientOcclusion_ST.xy + _AmbientOcclusion_ST.zw;
+                o.uv2 = v.uv1 * _AmbientOcclusion_ST.xy + _AmbientOcclusion_ST.zw;
 
                 // fog
 #if USING_FOG
